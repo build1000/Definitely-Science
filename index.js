@@ -12,245 +12,226 @@ import wisp from "wisp-server-node";
 import { createBareServer } from "@tomphttp/bare-server-node";
 import cors from "cors";
 
-import path from 'path';
-import fs from 'fs';
-import { dirname } from 'path';
-import { fileURLToPath } from 'url';
+import path from "path";
+import fs from "fs";
+import { dirname } from "path";
+import { fileURLToPath } from "url";
 
-import validator from 'validator';
-
+import validator from "validator";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-
 const app = express();
-const bareServer = createBareServer("/bare/")
-
+const bareServer = createBareServer("/bare/");
 
 app.use(express.json());
-
 
 // Function to read file content
 function readFileContent(filePath) {
   return new Promise((resolve, reject) => {
-      fs.readFile(filePath, "utf8", (err, data) => {
-          if (err) {
-              reject(err);
-          } else {
-              resolve(data);
-          }
-      });
+    fs.readFile(filePath, "utf8", (err, data) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(data);
+      }
+    });
   });
 }
 
-app.get('/class/:className', async (req, res) => {
+app.get("/class/:className", async (req, res) => {
   const className = validator.escape(req.params.className);
   try {
-      const filePath = path.join(__dirname, 'public', 'class.html');
-      const headPath = path.join(__dirname, 'src', 'head.html');
-      const footerPath = path.join(__dirname, 'src', 'footer.html');
-      const navbarPath = path.join(__dirname, 'src', 'navbar.html');
+    const filePath = path.join(__dirname, "public", "class.html");
+    const headPath = path.join(__dirname, "src", "head.html");
+    const footerPath = path.join(__dirname, "src", "footer.html");
+    const navbarPath = path.join(__dirname, "src", "navbar.html");
 
-      const [htmlContent, headContent, footerContent, navbarContent] = await Promise.all([
+    const [htmlContent, headContent, footerContent, navbarContent] =
+      await Promise.all([
         readFileContent(filePath),
         readFileContent(headPath),
         readFileContent(footerPath),
-        readFileContent(navbarPath)
-    ]);
-
-      // Replace placeholders with actual content
-      let modifiedData = htmlContent
-          .replace(/{{className}}/g, className)
-          .replace(/{{head}}/g, headContent)
-          .replace(/{{footer}}/g, footerContent)
-          .replace(/{{navbar}}/g, navbarContent);
-
-      res.send(modifiedData);
-  } catch (error) {
-    console.error(`Error reading file: ${error}`);
-    res.status(500).send('Server error');
-  }
-});
-
-app.get('/class2/:className', async (req, res) => {
-  const className = validator.escape(req.params.className);
-  try {
-      const filePath = path.join(__dirname, 'public', 'class2.html');
-      const headPath = path.join(__dirname, 'src', 'head.html');
-      const footerPath = path.join(__dirname, 'src', 'footer.html');
-      const navbarPath = path.join(__dirname, 'src', 'navbar.html');
-
-      const [htmlContent, headContent, footerContent, navbarContent] = await Promise.all([
-        readFileContent(filePath),
-        readFileContent(headPath),
-        readFileContent(footerPath),
-        readFileContent(navbarPath)
-    ]);
-
-      // Replace placeholders with actual content
-      let modifiedData = htmlContent
-          .replace(/{{className}}/g, className)
-          .replace(/{{head}}/g, headContent)
-          .replace(/{{footer}}/g, footerContent)
-          .replace(/{{navbar}}/g, navbarContent);
-
-      res.send(modifiedData);
-  } catch (error) {
-    console.error(`Error reading file: ${error}`);
-    res.status(500).send('Server error');
-  }
-});
-
-app.get('/classes/:className', async (req, res) => {
-  const className = validator.escape(req.params.className);
-  try {
-      const filePath = path.join(__dirname, 'public', 'classes.html');
-      const headPath = path.join(__dirname, 'src', 'head.html');
-      const footerPath = path.join(__dirname, 'src', 'footer.html');
-      const navbarPath = path.join(__dirname, 'src', 'navbar.html');
-
-      const [htmlContent, headContent, footerContent, navbarContent] = await Promise.all([
-        readFileContent(filePath),
-        readFileContent(headPath),
-        readFileContent(footerPath),
-        readFileContent(navbarPath)
-    ]);
-
-      // Replace placeholders with actual content
-      let modifiedData = htmlContent
-          .replace(/{{classesName}}/g, className)
-          .replace(/{{head}}/g, headContent)
-          .replace(/{{footer}}/g, footerContent)
-          .replace(/{{navbar}}/g, navbarContent);
-
-      res.send(modifiedData);
-  } catch (error) {
-    console.error(`Error reading file: ${error}`);
-    res.status(500).send('Server error');
-  }
-});
-
-app.get('/app/:appName', async (req, res) => {
-    const appName = validator.escape(req.params.appName);
-    try {
-        const filePath = path.join(__dirname, 'public', 'app.html');
-        const headPath = path.join(__dirname, 'src', 'head.html');
-        const footerPath = path.join(__dirname, 'src', 'footer.html');
-        const navbarPath = path.join(__dirname, 'src', 'navbar.html');
-  
-        const [htmlContent, headContent, footerContent, navbarContent] = await Promise.all([
-          readFileContent(filePath),
-          readFileContent(headPath),
-          readFileContent(footerPath),
-          readFileContent(navbarPath)
+        readFileContent(navbarPath),
       ]);
-  
-        // Replace placeholders with actual content
-        let modifiedData = htmlContent
-            .replace(/{{appName}}/g, appName)
-            .replace(/{{head}}/g, headContent)
-            .replace(/{{footer}}/g, footerContent)
-            .replace(/{{navbar}}/g, navbarContent);
-  
-        res.send(modifiedData);
-    } catch (error) {
-      console.error(`Error reading file: ${error}`);
-      res.status(500).send('Server error');
-    }
-  });
 
-app.get('/app2/:appName', async (req, res) => {
-    const appName = validator.escape(req.params.appName);
-    try {
-        const filePath = path.join(__dirname, 'public', 'app2.html');
-        const headPath = path.join(__dirname, 'src', 'head.html');
-        const footerPath = path.join(__dirname, 'src', 'footer.html');
-        const navbarPath = path.join(__dirname, 'src', 'navbar.html');
-  
-        const [htmlContent, headContent, footerContent, navbarContent] = await Promise.all([
-          readFileContent(filePath),
-          readFileContent(headPath),
-          readFileContent(footerPath),
-          readFileContent(navbarPath)
+    let modifiedData = htmlContent
+      .replace(/{{className}}/g, className)
+      .replace(/{{head}}/g, headContent)
+      .replace(/{{footer}}/g, footerContent)
+      .replace(/{{navbar}}/g, navbarContent);
+
+    res.send(modifiedData);
+  } catch (error) {
+    console.error(`Error reading file: ${error}`);
+    res.status(500).send("Server error");
+  }
+});
+
+app.get("/class2/:className", async (req, res) => {
+  const className = validator.escape(req.params.className);
+  try {
+    const filePath = path.join(__dirname, "public", "class2.html");
+    const headPath = path.join(__dirname, "src", "head.html");
+    const footerPath = path.join(__dirname, "src", "footer.html");
+    const navbarPath = path.join(__dirname, "src", "navbar.html");
+
+    const [htmlContent, headContent, footerContent, navbarContent] =
+      await Promise.all([
+        readFileContent(filePath),
+        readFileContent(headPath),
+        readFileContent(footerPath),
+        readFileContent(navbarPath),
       ]);
-  
-        // Replace placeholders with actual content
-        let modifiedData = htmlContent
-            .replace(/{{appName}}/g, appName)
-            .replace(/{{head}}/g, headContent)
-            .replace(/{{footer}}/g, footerContent)
-            .replace(/{{navbar}}/g, navbarContent);
-  
-        res.send(modifiedData);
-    } catch (error) {
-      console.error(`Error reading file: ${error}`);
-      res.status(500).send('Server error');
-    }
-  });
 
+    let modifiedData = htmlContent
+      .replace(/{{className}}/g, className)
+      .replace(/{{head}}/g, headContent)
+      .replace(/{{footer}}/g, footerContent)
+      .replace(/{{navbar}}/g, navbarContent);
+
+    res.send(modifiedData);
+  } catch (error) {
+    console.error(`Error reading file: ${error}`);
+    res.status(500).send("Server error");
+  }
+});
+
+app.get("/classes/:className", async (req, res) => {
+  const className = validator.escape(req.params.className);
+  try {
+    const filePath = path.join(__dirname, "public", "classes.html");
+    const headPath = path.join(__dirname, "src", "head.html");
+    const footerPath = path.join(__dirname, "src", "footer.html");
+    const navbarPath = path.join(__dirname, "src", "navbar.html");
+
+    const [htmlContent, headContent, footerContent, navbarContent] =
+      await Promise.all([
+        readFileContent(filePath),
+        readFileContent(headPath),
+        readFileContent(footerPath),
+        readFileContent(navbarPath),
+      ]);
+
+    let modifiedData = htmlContent
+      .replace(/{{classesName}}/g, className)
+      .replace(/{{head}}/g, headContent)
+      .replace(/{{footer}}/g, footerContent)
+      .replace(/{{navbar}}/g, navbarContent);
+
+    res.send(modifiedData);
+  } catch (error) {
+    console.error(`Error reading file: ${error}`);
+    res.status(500).send("Server error");
+  }
+});
+
+app.get("/app/:appName", async (req, res) => {
+  const appName = validator.escape(req.params.appName);
+  try {
+    const filePath = path.join(__dirname, "public", "app.html");
+    const headPath = path.join(__dirname, "src", "head.html");
+    const footerPath = path.join(__dirname, "src", "footer.html");
+    const navbarPath = path.join(__dirname, "src", "navbar.html");
+
+    const [htmlContent, headContent, footerContent, navbarContent] =
+      await Promise.all([
+        readFileContent(filePath),
+        readFileContent(headPath),
+        readFileContent(footerPath),
+        readFileContent(navbarPath),
+      ]);
+
+    let modifiedData = htmlContent
+      .replace(/{{appName}}/g, appName)
+      .replace(/{{head}}/g, headContent)
+      .replace(/{{footer}}/g, footerContent)
+      .replace(/{{navbar}}/g, navbarContent);
+
+    res.send(modifiedData);
+  } catch (error) {
+    console.error(`Error reading file: ${error}`);
+    res.status(500).send("Server error");
+  }
+});
+
+app.get("/app2/:appName", async (req, res) => {
+  const appName = validator.escape(req.params.appName);
+  try {
+    const filePath = path.join(__dirname, "public", "app2.html");
+    const headPath = path.join(__dirname, "src", "head.html");
+    const footerPath = path.join(__dirname, "src", "footer.html");
+    const navbarPath = path.join(__dirname, "src", "navbar.html");
+
+    const [htmlContent, headContent, footerContent, navbarContent] =
+      await Promise.all([
+        readFileContent(filePath),
+        readFileContent(headPath),
+        readFileContent(footerPath),
+        readFileContent(navbarPath),
+      ]);
+
+    let modifiedData = htmlContent
+      .replace(/{{appName}}/g, appName)
+      .replace(/{{head}}/g, headContent)
+      .replace(/{{footer}}/g, footerContent)
+      .replace(/{{navbar}}/g, navbarContent);
+
+    res.send(modifiedData);
+  } catch (error) {
+    console.error(`Error reading file: ${error}`);
+    res.status(500).send("Server error");
+  }
+});
 
 // Middleware to handle template replacements
 app.use(async (req, res, next) => {
   let reqPath = req.path;
-  
-  // Determine if the request is for the root URL or a subfolder
-  if (reqPath === '/' || reqPath.endsWith('/')) {
-      reqPath = path.join(reqPath, 'index.html');
+
+  if (reqPath === "/" || reqPath.endsWith("/")) {
+    reqPath = path.join(reqPath, "index.html");
   }
 
-  if (reqPath.endsWith('.html')) {
+  if (reqPath.endsWith(".html")) {
+    try {
+      const filePath = path.join(__dirname, "public", reqPath);
+
       try {
-          const filePath = path.join(__dirname, 'public', reqPath);
-          
-          // Check if the file exists
-          try {
-              await fs.promises.access(filePath);
-          } catch (err) {
-            console.error(`File not found: ${filePath}`);
-            return next(); // Call next() to pass the request to the next middleware
-          }
-
-          const className = '';
-          const headPath = path.join(__dirname, 'src', 'head.html');
-          const footerPath = path.join(__dirname, 'src', 'footer.html');
-          const navbarPath = path.join(__dirname, 'src', 'navbar.html');
-
-
-          //console.log(`Reading file: ${filePath}`);
-          const [htmlContent, headContent, footerContent, navbarContent] = await Promise.all([
-              readFileContent(filePath),
-              readFileContent(headPath),
-              readFileContent(footerPath),
-              readFileContent(navbarPath)
-          ]);
-
-            //let modifiedNavbarContent = navbarContent;
-
-
-          //console.log('Successfully read all files');
-
-          // Replace placeholders with actual content
-          let modifiedData = htmlContent
-              .replace(/{{className}}/g, className)
-              .replace(/{{head}}/g, headContent)
-              .replace(/{{footer}}/g, footerContent)
-              .replace(/{{navbar}}/g, navbarContent);
-
-          //console.log('Successfully replaced placeholders');
-          res.send(modifiedData);
-      } catch (error) {
-          console.error(`Error processing request: ${error.message}`);
-          res.status(500).send('Server error');
+        await fs.promises.access(filePath);
+      } catch (err) {
+        console.error(`File not found: ${filePath}`);
+        return next();
       }
+
+      const className = "";
+      const headPath = path.join(__dirname, "src", "head.html");
+      const footerPath = path.join(__dirname, "src", "footer.html");
+      const navbarPath = path.join(__dirname, "src", "navbar.html");
+
+      const [htmlContent, headContent, footerContent, navbarContent] =
+        await Promise.all([
+          readFileContent(filePath),
+          readFileContent(headPath),
+          readFileContent(footerPath),
+          readFileContent(navbarPath),
+        ]);
+
+      let modifiedData = htmlContent
+        .replace(/{{className}}/g, className)
+        .replace(/{{head}}/g, headContent)
+        .replace(/{{footer}}/g, footerContent)
+        .replace(/{{navbar}}/g, navbarContent);
+
+      res.send(modifiedData);
+    } catch (error) {
+      console.error(`Error processing request: ${error.message}`);
+      res.status(500).send("Server error");
+    }
   } else {
-      next();
+    next();
   }
 });
-
-
-
-
 
 app.use(express.static("public"));
 app.use("/uv/", express.static(uvPath));
@@ -261,18 +242,14 @@ app.use("/baremux/", express.static(baremuxPath));
 
 app.use("/bare", cors({ origin: true }));
 
-
-
-
 // Error for everything else
 app.use((req, res) => {
   res.status(404);
-  //res.sendFile(join("public", "404.html"));
-  res.sendFile(path.join(__dirname, 'public', '404.html'));
+  res.sendFile(path.join(__dirname, "public", "404.html"));
 });
 
-
-const server = createServer();
+// ✅ FIXED: allowHTTP1 + attach app directly
+const server = createServer({ allowHTTP1: true }, app);
 
 server.on("request", (req, res) => {
   if (bareServer.shouldRoute(req)) {
@@ -280,28 +257,23 @@ server.on("request", (req, res) => {
   } else {
     app(req, res);
   }
-})
+});
 
 server.on("upgrade", (req, socket, head) => {
-  if (req.url.endsWith("/wisp/"))
+  if (req.url.endsWith("/wisp/")) {
     wisp.routeRequest(req, socket, head);
-  else
-  {
-	  if (bareServer.shouldRoute(req)) {
-		bareServer.routeUpgrade(req, socket, head);
-	  } else {
-		socket.end();
-	  }
+  } else if (bareServer.shouldRoute(req)) {
+    bareServer.routeUpgrade(req, socket, head);
+  } else {
+    socket.end();
   }
 });
 
 let port = parseInt(process.env.PORT || "");
-
-if (isNaN(port)) port = 80;
+if (isNaN(port)) port = 8080;
 
 server.on("listening", () => {
   const address = server.address();
-
   console.log("Server:");
   console.log(`\thttp://${hostname()}:${address.port}`);
 });
@@ -317,5 +289,5 @@ function shutdown() {
 
 server.listen({
   port,
-  host: '0.0.0.0',
+  host: "0.0.0.0",
 });
